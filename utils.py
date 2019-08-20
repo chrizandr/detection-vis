@@ -24,7 +24,7 @@ def create_info_file(output_dir, data_dir, annotation_dir, size):
                 if len(preds) == 0:
                     aps.append(0)
                 else:
-                    target_cls = np.zeros(preds.shape[0])
+                    target_cls = np.zeros(annotation.shape[0])
                     pred_cls = np.zeros(preds.shape[0])
                     tps = match_annotations(preds, annotation, overlap)
                     p, r, ap, f1, _ = ap_per_class(tps, conf, pred_cls, target_cls)
@@ -189,6 +189,6 @@ if __name__ == "__main__":
 
     output_dir = os.getcwd()
     # height, width of output images
-    size = (1024, 1024)
+    size = (720, 1280)
 
     create_info_file(output_dir, data_dir, annotation_dir, size)

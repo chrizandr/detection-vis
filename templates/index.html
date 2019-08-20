@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topnav">
+  <h1>Detection-Vis</h1>
+  <a class="active" href="#home">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+  <a href="#about">About</a>
+</div>
+
+<div class="row1">
+
+  <div class="column1" style="background-color:#aaa;">
+    <table>
+    <tbody>
+      {% for i in range(0, files|length, 2)%}
+        {% if i+2 < files|length %}
+          <tr>
+            {% for j in range(i, i+2)%}
+              <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
+            {% endfor %}
+          </tr>
+        {% else %}
+          <tr>
+            {% for j in range(i, files|length)%}
+              <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
+            {% endfor %}
+          </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+    </table>
+  </div>
+
+  <div class="column2" style="background-color:#bbb;">
+    <img src="{{ graph }}" width="98%">
+    {% if map is sequence %}
+      <h5> mAP50 : {{map[0]}}</h5>
+      <h5> mAP75 : {{map[1]}}</h5>
+      <h5> mAP@[0.5: 0.95] : {{map[2]}}</h5>
+    {% else %}
+      <h5> {{map_label}} : {{'%0.4f' % map}}</h5>
+    {% endif %}
+  </div>
+</div>
+
+</body>
+</html>
