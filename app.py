@@ -31,16 +31,21 @@ app.secret_key = "DFDKFNWEFOWEFIWV"
 app.config["MONGO_URI"] = "mongodb://localhost:27017/demodb"
 data_folder = "static/output"
 metrics = ["all", "ap50", "ap75", "ap50to95"]
+metric_labels = ["All", "AP@50", "AP@75", "AP@[0.5:0.95]"]
 models, labels = get_info(data_folder)
 
 
 @app.route("/", methods=["GET"])
-@app.route("/<string:model>/", methods=["GET"])
-@app.route("/<string:model>/<string:metric>", methods=["GET"])
-@app.route("/<string:model>/<string:metric>/<float:threshlow>", methods=["GET"])
-@app.route("/<string:model>/<string:metric>/<float:threshlow>/<float:threshup>", methods=["GET"])
-def index(model="yolo", metric="all", threshup=1, threshlow=0):
+def index():
     """Index page."""
+    model = request.args.get("model", "yolo")
+    metric = request.args.get("metric", "all")
+    try:
+        threshup = float(request.args.get("threshup", 1))
+        threshlow = float(request.args.get("threshlow", 0))
+    except ValueError:
+        abort(404)
+
     if metric not in metrics:
         abort(404)
     if threshup > 1 or threshlow < 0:
@@ -48,16 +53,13 @@ def index(model="yolo", metric="all", threshup=1, threshlow=0):
     if model not in models:
         abort(404)
 
-    now = datetime.now()
-    cache_tag = datetime.timestamp(now)
-
     files, map, map_label, graph = get_files_metrics(model, metric, threshup, threshlow)
     label = labels[models.index(model)]
     # pdb.set_trace()
     return render_template("index.html", files=files, map=map, metric=metric,
                            threshup=threshup, threshlow=threshlow, model=model,
                            label=label, labels=labels, models=models, metrics=metrics,
-                           graph=graph, map_label=map_label)
+                           graph=graph, map_label=map_label, metric_labels=metric_labels)
 
 
 def get_files_metrics(model, metric, threshup, threshlow):
@@ -99,12 +101,12 @@ def get_files_metrics(model, metric, threshup, threshlow):
         outfiles = [files[x] for x in indices_50 if files[x] in detected_files]
         ax.plot(bins_50[0:-1], dist_50, color='red', label="AP50 distribution")
     if metric == "ap75" or metric == "all":
-        map_label = "mAP50"
+        map_label = "mAP75"
         map = map_75
         outfiles = [files[x] for x in indices_75 if files[x] in detected_files]
         ax.plot(bins_75[0:-1], dist_75, color='green', label="AP75 distribution")
     if metric == "ap50to95" or metric == "all":
-        map_label = "mAP50"
+        map_label = "mAP@[0.5:0.95]"
         map = map_50to95
         outfiles = [files[x] for x in indices_50to95 if files[x] in detected_files]
         ax.plot(bins_50to95[0:-1], dist_50to95, color='blue', label="AP@[50:95] distribution")

@@ -3,15 +3,46 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
 
 <div class="topnav">
-  <h1>Detection-Vis</h1>
-  <a class="active" href="#home">Home</a>
-  <a href="#news">News</a>
-  <a href="#contact">Contact</a>
-  <a href="#about">About</a>
+   <form method="get" action="{{url_for('index')}}">
+    <div class="form">
+      <p> Model: </p>
+      <select name="model">
+       {% for m in range(models|length) %}
+          {% if model == models[m] %}
+            <option value={{models[m]}} selected>{{labels[m]}}</option>
+          {% else %}
+            <option value={{models[m]}}>{{labels[m]}}</option>
+          {% endif %}
+       {% endfor %}
+      </select>
+    </div>
+    <div data-role="rangeslider" class="form">
+      <p>Precision Threshold:</p>
+      <input type="range" name="threshlow" value="{{threshlow}}" min="0" max="1" step="0.05">
+      <input type="range" name="threshup" value="{{threshup}}" min="0" max="1" step="0.05">
+    </div>
+    <div class="form">
+      <p>Metric:</p>
+      <select name="metric">
+       {% for m in range(metrics|length) %}
+          {% if metric == metrics[m] %}
+            <option value={{metrics[m]}} selected>{{metric_labels[m]}}</option>
+          {% else %}
+            <option value={{metrics[m]}}>{{metric_labels[m]}}</option>
+          {% endif %}
+       {% endfor %}
+      </select>
+      <input type="submit" value="Submit">
+    </div>
+  </form>
+  <br><br>
 </div>
 
 <div class="row1">
@@ -19,10 +50,10 @@
   <div class="column1" style="background-color:#aaa;">
     <table>
     <tbody>
-      {% for i in range(0, files|length, 2)%}
-        {% if i+2 < files|length %}
+      {% for i in range(0, files|length, 3)%}
+        {% if i+3 < files|length %}
           <tr>
-            {% for j in range(i, i+2)%}
+            {% for j in range(i, i+3)%}
               <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
             {% endfor %}
           </tr>
@@ -39,13 +70,13 @@
   </div>
 
   <div class="column2" style="background-color:#bbb;">
-    <img src="{{ graph }}" width="98%">
+    <img src="{{ graph }}" width="100%" style="left-padding:10px;">
     {% if map is sequence %}
-      <h5> mAP50 : {{map[0]}}</h5>
-      <h5> mAP75 : {{map[1]}}</h5>
-      <h5> mAP@[0.5: 0.95] : {{map[2]}}</h5>
+      <b><p> mAP50 : {{map[0]}}</p></b>
+      <b><p> mAP75 : {{map[1]}}</p></b>
+      <b><p> mAP@[0.5: 0.95] : {{map[2]}}</p></b>
     {% else %}
-      <h5> {{map_label}} : {{'%0.4f' % map}}</h5>
+      <b><p> {{map_label}} : {{'%0.4f' % map}}</p></b>
     {% endif %}
   </div>
 </div>
