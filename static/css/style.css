@@ -4,28 +4,32 @@
 
 /* Create two equal columns that floats next to each other */
 .column1 {
-  float: left;
-  width: 65%;
-  height: 80vh;
+  float: right;
+  width: 70%;
+  height: 100vh;
   padding: 10px;
   overflow-y: scroll;
 }
 
 .column2 {
   float: left;
-  width: 35%;
-  height: 80vh;
+  width: 30%;
+  height: 100vh;
   padding: 10px;
   overflow-y: scroll;
 }
 
 .form {
   float:left;
-  width:33%;
-  color: white;
-  padding: 10px;
+  width:50%;
+  color: black;
+  padding: 2px;
 }
 
+.form-object {
+  height: 2.5vh;
+  color: black;
+}
 
 .form2 {
   float:center;

@@ -10,51 +10,80 @@
 </head>
 <body>
 
-<div class="topnav">
-   <form method="get" action="{{url_for('index')}}">
-    <div class="form">
-      <p> Model: </p>
-      <select name="model">
-       {% for m in range(models|length) %}
-          {% if model == models[m] %}
-            <option value={{models[m]}} selected>{{labels[m]}}</option>
-          {% else %}
-            <option value={{models[m]}}>{{labels[m]}}</option>
-          {% endif %}
-       {% endfor %}
-      </select>
-    </div>
-    <div data-role="rangeslider" class="form">
-      <p>Precision Threshold:</p>
-      <input type="range" name="threshlow" value="{{threshlow}}" min="0" max="1" step="0.05">
-      <input type="range" name="threshup" value="{{threshup}}" min="0" max="1" step="0.05">
-    </div>
-    <div class="form">
-      <p>Metric:</p>
-      <select name="metric">
-       {% for m in range(metrics|length) %}
-          {% if metric == metrics[m] %}
-            <option value={{metrics[m]}} selected>{{metric_labels[m]}}</option>
-          {% else %}
-            <option value={{metrics[m]}}>{{metric_labels[m]}}</option>
-          {% endif %}
-       {% endfor %}
-      </select>
-      <input type="submit" value="Submit">
-    </div>
-  </form>
+<!-- <div class="topnav">
   <br><br>
-</div>
+</div> -->
 
 <div class="row1">
 
-  <div class="column1" style="background-color:#aaa;">
+  <div class="column2" style="background-color:#fff;">
+    <form method="get" action="{{url_for('index')}}">
+     <div class="form">
+       <p> Model: </p>
+       <select name="model" class="form-object">
+        {% for m in range(models|length) %}
+           {% if model == models[m] %}
+             <option value={{models[m]}} selected>{{labels[m]}}</option>
+           {% else %}
+             <option value={{models[m]}}>{{labels[m]}}</option>
+           {% endif %}
+        {% endfor %}
+       </select>
+     </div>
+     <div class="form">
+       <p>Metrics:</p>
+       <select name="metric" class="form-object">
+        {% for m in range(metrics|length) %}
+           {% if metric == metrics[m] %}
+             <option value={{metrics[m]}} selected>{{metric_labels[m]}}</option>
+           {% else %}
+             <option value={{metrics[m]}}>{{metric_labels[m]}}</option>
+           {% endif %}
+        {% endfor %}
+       </select>
+       <br>
+     </div>
+     <div data-role="rangeslider">
+       <p>Precision Threshold:</p>
+       <input type="range" name="threshlow" value="{{threshlow}}" min="0" max="1" step="0.05">
+       <input type="range" name="threshup" value="{{threshup}}" min="0" max="1" step="0.05">
+     </div>
+     <hr>
+     <img src="{{ graph }}" width="100%" style="left-padding:10px;">
+     {% if map is sequence %}
+     <table class="table table-bordered table-hover">
+     <thead>
+       <th><td>mAP50</td><td>mAP75</td><td>mAP@[0.5: 0.95]</td></th>
+     </thead>
+     <tbody>
+      <tr>
+        <td>{{'%0.4f' %map[0]}}</td>
+        <td>{{'%0.4f' %map[1]}}</td>
+        <td> {{'%0.4f' %map[2]}}</td>
+      </tr>
+    </tbody>
+     {% else %}
+     <table>
+     <thead>
+       <th><td>{{map_label}}</td></th>
+     </thead>
+     <tbody>
+      <tr>
+        <td>{{'%0.4f' %map}}</td>
+      </tr>
+    </tbody>
+  </table>
+     {% endif %}
+      <input type="submit" value="Submit" style="width:40%; float:bottom;">
+   </form>
+  </div>
+  <div class="column1" style="background-color:#bbb;">
     <table>
     <tbody>
-      {% for i in range(0, files|length, 3)%}
-        {% if i+3 < files|length %}
+      {% for i in range(0, files|length, 4)%}
+        {% if i+4 < files|length %}
           <tr>
-            {% for j in range(i, i+3)%}
+            {% for j in range(i, i+4)%}
               <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
             {% endfor %}
           </tr>
@@ -68,19 +97,8 @@
       {% endfor %}
     </tbody>
     </table>
-  </div>
 
-  <div class="column2" style="background-color:#bbb;">
-    <img src="{{ graph }}" width="100%" style="left-padding:10px;">
-    {% if map is sequence %}
-      <b><p> mAP50 : {{map[0]}}</p></b>
-      <b><p> mAP75 : {{map[1]}}</p></b>
-      <b><p> mAP@[0.5: 0.95] : {{map[2]}}</p></b>
-    {% else %}
-      <b><p> {{map_label}} : {{'%0.4f' % map}}</p></b>
-    {% endif %}
   </div>
 </div>
-
 </body>
 </html>
