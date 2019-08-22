@@ -184,11 +184,11 @@ def compute_ap(recall, precision):
 
 if __name__ == "__main__":
     output_dir = os.getcwd()
-    data_dir = "/home/chris/sports/detection_exp/annotated/"
-    annotation_dir = "/home/chris/sports/detection_exp/annotations/"
+    data_dir = "/home/chris_andrew/sports/detection_exp/annotated/"
+    annotation_dir = "/home/chris_andrew/sports/detection_exp/annotations/"
 
     output_dir = os.getcwd()
     # height, width of output images
-    size = (720, 1280)
+    size = (1024, 1024)
 
     create_info_file(output_dir, data_dir, annotation_dir, size)
