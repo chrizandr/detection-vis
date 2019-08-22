@@ -121,7 +121,6 @@ def get_files_metrics(model, metric, threshup, threshlow):
     if metric == "all":
         map = [map_50, map_75, map_50to95]
 
-    pdb.set_trace()
     ax.set_title("Distribution of Average precision based on metric and thresholds")
     ax.set_xlabel("Average Precision")
     ax.set_ylabel("Frequency")
