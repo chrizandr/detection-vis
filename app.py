@@ -4,11 +4,10 @@ import pdb
 import io
 import base64
 import numpy as np
-from datetime import datetime
 from flask import Flask
 from flask import (
     request, render_template,
-    redirect, url_for, flash, abort
+    url_for, abort
 )
 import matplotlib.pyplot as plt
 
@@ -80,16 +79,25 @@ def get_files_metrics(model, metric, threshup, threshlow):
     indices_50 = ((ap_50 >= threshlow) & (ap_50 <= threshup)).nonzero()[0]
     map_50 = ap_50[indices_50].mean()
     dist_50, bins_50 = np.histogram(ap_50[indices_50], range=(threshlow, threshup))
+    if len(indices_50) == 0:
+        ap_50 = np.zeros(len(ap_50))
+        map_50, dist_50, bins_50 = 0, [], []
 
     ap_75 = aps[:, 5]
     indices_75 = ((ap_75 >= threshlow) & (ap_75 <= threshup)).nonzero()[0]
     map_75 = ap_75[indices_75].mean()
     dist_75, bins_75 = np.histogram(ap_75[indices_75], range=(threshlow, threshup))
+    if len(indices_75) == 0:
+        ap_75 = np.zeros(len(ap_75))
+        map_75, dist_75, bins_75 = 0, [], []
 
     ap_50to95 = np.mean(aps, axis=1)
     indices_50to95 = ((ap_50to95 >= threshlow) & (ap_50to95 <= threshup)).nonzero()[0]
     map_50to95 = ap_50to95[indices_50to95].mean()
     dist_50to95, bins_50to95 = np.histogram(ap_50to95[indices_50to95], range=(threshlow, threshup))
+    if len(indices_50to95) == 0:
+        ap_50to95 = np.zeros(len(ap_50to95))
+        map_50to95, dist_50to95, bins_50to95 = 0, [], []
 
     outfiles = []
     map_label = None
@@ -127,4 +135,4 @@ def get_files_metrics(model, metric, threshup, threshlow):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8888)
+    app.run(host='0.0.0.0', port=8888, debug=True)
