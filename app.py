@@ -106,21 +106,22 @@ def get_files_metrics(model, metric, threshup, threshlow):
     if metric == "ap50" or metric == "all":
         map_label = "mAP50"
         map = map_50
-        outfiles = [files[x] for x in indices_50 if files[x] in detected_files]
+        outfiles.extend([files[x] for x in indices_50 if files[x] in detected_files])
         ax.plot(bins_50[0:-1], dist_50, color='red', label="AP50 distribution")
     if metric == "ap75" or metric == "all":
         map_label = "mAP75"
         map = map_75
-        outfiles = [files[x] for x in indices_75 if files[x] in detected_files]
+        outfiles.extend([files[x] for x in indices_75 if files[x] in detected_files])
         ax.plot(bins_75[0:-1], dist_75, color='green', label="AP75 distribution")
     if metric == "ap50to95" or metric == "all":
         map_label = "mAP@[0.5:0.95]"
         map = map_50to95
-        outfiles = [files[x] for x in indices_50to95 if files[x] in detected_files]
+        outfiles.extend([files[x] for x in indices_50to95 if files[x] in detected_files])
         ax.plot(bins_50to95[0:-1], dist_50to95, color='blue', label="AP@[50:95] distribution")
     if metric == "all":
         map = [map_50, map_75, map_50to95]
 
+    pdb.set_trace()
     ax.set_title("Distribution of Average precision based on metric and thresholds")
     ax.set_xlabel("Average Precision")
     ax.set_ylabel("Frequency")
