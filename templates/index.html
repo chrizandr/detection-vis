@@ -1,104 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Detection Visualisation</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <title>Detection Visualisation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.mobile.min.css') }}">
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.mobile.min.js') }}"></script>
 </head>
 <body>
 
-<!-- <div class="topnav">
-  <br><br>
-</div> -->
-
-<div class="row1">
-
-  <div class="column2" style="background-color:#fff;">
-    <form method="get" action="{{url_for('index')}}">
-     <div class="form">
-       <p> Model: </p>
-       <select name="model" class="form-object">
-        {% for m in range(models|length) %}
-           {% if model == models[m] %}
-             <option value={{models[m]}} selected>{{labels[m]}}</option>
-           {% else %}
-             <option value={{models[m]}}>{{labels[m]}}</option>
-           {% endif %}
-        {% endfor %}
-       </select>
-     </div>
-     <div class="form">
-       <p>Metrics:</p>
-       <select name="metric" class="form-object">
-        {% for m in range(metrics|length) %}
-           {% if metric == metrics[m] %}
-             <option value={{metrics[m]}} selected>{{metric_labels[m]}}</option>
-           {% else %}
-             <option value={{metrics[m]}}>{{metric_labels[m]}}</option>
-           {% endif %}
-        {% endfor %}
-       </select>
-       <br>
-     </div>
-     <div data-role="rangeslider">
-       <p>Precision Threshold:</p>
-       <input type="range" name="threshlow" value="{{threshlow}}" min="0" max="1" step="0.05">
-       <input type="range" name="threshup" value="{{threshup}}" min="0" max="1" step="0.05">
-     </div>
-     <hr>
-     <img src="{{ graph }}" width="100%" style="left-padding:10px;">
-     {% if map is sequence %}
-     <table class="table table-bordered table-hover">
-     <thead>
-       <th><td>mAP50</td><td>mAP75</td><td>mAP@[0.5: 0.95]</td></th>
-     </thead>
-     <tbody>
-      <tr>
-        <td>{{'%0.4f' %map[0]}}</td>
-        <td>{{'%0.4f' %map[1]}}</td>
-        <td> {{'%0.4f' %map[2]}}</td>
-      </tr>
-    </tbody>
-     {% else %}
-     <table>
-     <thead>
-       <th><td>{{map_label}}</td></th>
-     </thead>
-     <tbody>
-      <tr>
-        <td>{{'%0.4f' %map}}</td>
-      </tr>
-    </tbody>
-  </table>
-     {% endif %}
-      <input type="submit" value="Submit" style="width:40%; float:bottom;">
-   </form>
+  <div id="myModal" class="modal">
+    <span id="close1" class="close">&times;</span>
+    <img class="modal-content" id="img01">
   </div>
-  <div class="column1" style="background-color:#bbb;">
-    <table>
-    <tbody>
-      {% for i in range(0, files|length, 4)%}
-        {% if i+4 < files|length %}
+
+  <div id="myModal2" class="modal">
+    <span id="close2" class="close">&times;</span>
+    <span id="prev" class="prev">&larr;</span>
+    <span id="next" class="next">&rarr;</span>
+    <img class="modal-content2" id="img02">
+  </div>
+
+  <div class="row1">
+
+    <div class="column2" style="background-color:#fff;">
+      <form method="get" action="{{url_for('index')}}">
+
+        <div class="form">
+          <p> Model: </p>
+          <select name="model" class="form-object">
+            {% for m in range(models|length) %}
+            {% if model == models[m] %}
+            <option value={{models[m]}} selected>{{labels[m]}}</option>
+            {% else %}
+            <option value={{models[m]}}>{{labels[m]}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form">
+          <p>Metrics:</p>
+          <select name="metric" class="form-object">
+            {% for m in range(metrics|length) %}
+            {% if metric == metrics[m] %}
+            <option value={{metrics[m]}} selected>{{metric_labels[m]}}</option>
+            {% else %}
+            <option value={{metrics[m]}}>{{metric_labels[m]}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <br>
+        </div>
+
+        <div data-role="rangeslider" style="zoom:90%">
+          <p>Metric Threshold:</p>
+          <input type="range" name="threshlow" value="{{threshlow}}" min="0" max="1" step="0.05">
+          <input type="range" name="threshup" value="{{threshup}}" min="0" max="1" step="0.05">
+        </div>
+        <div class="form-object">
+          <br>
+          <button id="btn" type="submit">Get Results</button>
+        </div>
+      </form>
+      <br><br><hr>
+      <div class="form-object2">
+        {% if map is sequence %}
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>mAP50</th>
+              <th>mAP75</th>
+              <th>mAP@[0.5: 0.95]</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{'%0.4f' %map[0]}}</td>
+              <td>{{'%0.4f' %map[1]}}</td>
+              <td> {{'%0.4f' %map[2]}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {% else %}
+
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>{{map_label}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{'%0.4f' %map}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+      <div class="form-object2" style="background:black !important;">
+        <img id="graph" class="graph" src="{{ graph }}" width="100%" style="left-padding:10px;">
+      </div>
+    </div>
+
+    <div class="column1" style="background-color:#bbb;">
+      <table>
+        <tbody>
+          {% for i in range(0, files|length, 4)%}
+          {% if i+4 < files|length %}
           <tr>
             {% for j in range(i, i+4)%}
-              <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
+            <td><img id="resimg{{j}}" class="result" src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
             {% endfor %}
           </tr>
-        {% else %}
+          {% else %}
           <tr>
             {% for j in range(i, files|length)%}
-              <td><img src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
+            <td><img id="resimg{{j}}" class="result" src="{{ url_for('static', filename='output/' + model + '/' + files[j]) }}" width="100%"></td>
             {% endfor %}
           </tr>
-        {% endif %}
-      {% endfor %}
-    </tbody>
-    </table>
-
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 </body>
+<script src={{ url_for('static', filename='js/modal.js') }}></script>
 </html>
