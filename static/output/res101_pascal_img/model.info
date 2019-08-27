@@ -1,4 +1,4 @@
-Faster RCNN - Resnet101 + PascalVOC
+Faster RCNN - Resnet101 + PascalVOC - Test(400)
 ground_in_fb_345.png 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0
 top_out_bm_843.png 0.025 0.025 0.025 0.025 0.0 0.0 0.0 0.0 0.0 0.0
 ground_out_bm_2790.png 0.6666666666666666 0.6666666666666666 0.3333333333333333 0.3333333333333333 0.0 0.0 0.0 0.0 0.0 0.0

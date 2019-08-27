@@ -90,10 +90,10 @@ def get_scaled_annotations_PVOC(annotation_dir, new_size=(1024, 1024)):
         as_ = root.findall("object")
         for annotation in as_:
             bbox = annotation.findall("bndbox")[0]
-            xmin = int(bbox.findall("xmin")[0].text)
-            ymin = int(bbox.findall("ymin")[0].text)
-            xmax = int(bbox.findall("xmax")[0].text)
-            ymax = int(bbox.findall("ymax")[0].text)
+            xmin = float(bbox.findall("xmin")[0].text)
+            ymin = float(bbox.findall("ymin")[0].text)
+            xmax = float(bbox.findall("xmax")[0].text)
+            ymax = float(bbox.findall("ymax")[0].text)
 
             size = root.findall("size")[0]
             width = int(size.findall("width")[0].text)
@@ -101,10 +101,10 @@ def get_scaled_annotations_PVOC(annotation_dir, new_size=(1024, 1024)):
 
             new_h, new_w = new_size
             new_h, new_w = float(new_h), float(new_w)
-            ymin = int(ymin/(height/new_h))
-            ymax = int(ymax/(height/new_h))
-            xmin = int(xmin/(width/new_w))
-            xmax = int(xmax/(width/new_w))
+            ymin = float(ymin/(height/new_h))
+            ymax = float(ymax/(height/new_h))
+            xmin = float(xmin/(width/new_w))
+            xmax = float(xmax/(width/new_w))
             name = f.strip(".xml") + ".png"
             if name in annotations:
                 annotations[name] = np.vstack((annotations[name], [xmin, ymin, xmax, ymax]))
@@ -184,11 +184,11 @@ def compute_ap(recall, precision):
 
 if __name__ == "__main__":
     output_dir = os.getcwd()
-    data_dir = "/home/chris_andrew/sports/detection_exp/annotated/"
-    annotation_dir = "/home/chris_andrew/sports/detection_exp/annotations/"
+    data_dir = "/home/chris_andrew/sports/test/images/"
+    annotation_dir = "/home/chris_andrew/sports/test/annotations/"
 
     output_dir = os.getcwd()
     # height, width of output images
-    size = (1024, 1024)
+    size = (720, 1280)
 
     create_info_file(output_dir, data_dir, annotation_dir, size)
